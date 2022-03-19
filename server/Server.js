@@ -10,5 +10,6 @@ io.on("connection", (socket) => {
     //broadcasting to all client instances
     socket.broadcast.emit("receive-change", delta);
   });
+  //   socket.disconnect();
   console.log("connected");
 });

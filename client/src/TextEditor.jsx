@@ -7,15 +7,8 @@ import toolbarOptions from "./ToolbarOptions";
 //NEED to sanitise whatever gets stored here (opportunity to have concrete examples on how to do this)
 //Also use this to keep track of notes in multiple files for IRP
 const TextEditor = () => {
-  const [shareSocket, setShareSocket] = useState();
-  const [shareQuill, setShareQuill] = useState();
-
-  useEffect(() => {
-    const socket = io("http://localhost:3001");
-    setShareSocket(socket);
-
-    return () => socket.disconnect;
-  }, []);
+  const [shareSocketData, setShareSocketData] = useState();
+  const [shareQuillData, setShareQuillData] = useState();
 
   //without useEffect cleanup, I get new Quill inst. with every rerender. However, used useCallback to set
   //wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
@@ -32,40 +25,46 @@ const TextEditor = () => {
       theme: "snow",
       modules: { toolbar: toolbarOptions },
     });
-    setShareQuill(quill);
+    setShareQuillData(quill);
     console.log(quill);
   }, []);
 
   useEffect(() => {
-    //I could also use double equals 'null' - strict equality 'null' breaks the app
-    if (typeof shareSocket === "undefined" || typeof shareQuill === "undefined")
-      return;
+    const socket = io("http://localhost:3001");
+    setShareSocketData(socket);
 
-    const detectChange = (delta, oldDelta, source) => {
-      if (source !== "user") return;
-      shareSocket.emit("send-change", delta);
-    };
-    shareQuill.on("text-change", detectChange);
-
-    return () => {
-      shareQuill.off("text-change", detectChange);
-    };
-  }, [shareSocket, shareQuill]);
+    return () => socket.disconnect;
+  }, []);
 
   useEffect(() => {
-    //I could also use double equals 'null' - strict equality 'null' breaks the app
-    if (typeof shareSocket === "undefined" || typeof shareQuill === "undefined")
-      return;
+    console.log(shareSocketData);
+    if (shareSocketData == null || shareQuillData == null) return;
 
-    const detectChange = (delta) => {
-      shareQuill.updateContents(delta);
+    const detectChange = (delta, oldDelta, source) => {
+      //Quill doc - change may be from 'api', so accepting changes from 'user' only
+      if (source !== "user") return;
+      shareSocketData.emit("send-change", delta);
     };
-    shareSocket.on("receive-change", detectChange);
+    //"text-change" = Quill event - updates when the contents of Quill have changed
+    shareQuillData.on("text-change", detectChange);
 
     return () => {
-      shareSocket.off("receive-change", detectChange);
+      shareQuillData.off("text-change", detectChange);
     };
-  }, [shareSocket, shareQuill]);
+  }, [shareSocketData, shareQuillData]);
+
+  useEffect(() => {
+    if (shareSocketData == null || shareQuillData == null) return;
+
+    const detectChange = (delta) => {
+      shareQuillData.updateContents(delta);
+    };
+    shareSocketData.on("receive-change", detectChange);
+
+    return () => {
+      shareSocketData.off("receive-change", detectChange);
+    };
+  }, [shareSocketData, shareQuillData]);
 
   //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quills
   //on page), and referencing it to gain access to the div in the useCallback
