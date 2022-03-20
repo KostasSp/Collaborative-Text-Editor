@@ -12,6 +12,7 @@ function App() {
         <Routes>
           <Route
             path="/"
+            //create new client instance and redirect there everytime I visit localhost:3000 or homepage
             element={<Navigate to={`/documents/${uuidV4()}`} />}
           ></Route>
           <Route path="/documents/:id" element={<TextEditor />}></Route>

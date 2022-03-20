@@ -3,16 +3,18 @@ import Quill from "quill";
 import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
 import toolbarOptions from "./ToolbarOptions";
+import { useParams } from "react-router-dom";
 
 //NEED to sanitise whatever gets stored here (opportunity to have concrete examples on how to do this)
 //Also use this to keep track of notes in multiple files for IRP
 const TextEditor = () => {
   const [shareSocketData, setShareSocketData] = useState();
   const [shareQuillData, setShareQuillData] = useState();
+  const { id } = useParams();
 
-  //without useEffect cleanup, I get new Quill inst. with every rerender. However, used useCallback to set
-  //wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
-  //evaluated the ref in div "container" before it was instantiated
+  /*without useEffect cleanup, I get new Quill inst. with every rerender. However, used useCallback to set
+  wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
+  evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
     console.log(wrapper);
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
@@ -25,9 +27,22 @@ const TextEditor = () => {
       theme: "snow",
       modules: { toolbar: toolbarOptions },
     });
+    quill.enable(false);
+    quill.setText("Loading document...");
     setShareQuillData(quill);
     console.log(quill);
   }, []);
+
+  useEffect(() => {
+    if (shareSocketData == null || shareQuillData == null) return;
+
+    shareSocketData.once("load-instance", (instance) => {
+      shareQuillData.setContents(instance);
+      shareQuillData.enable();
+    });
+
+    shareSocketData.emit("get-instance", id);
+  }, [shareQuillData, shareSocketData, id]);
 
   useEffect(() => {
     const socket = io("http://localhost:3001");
