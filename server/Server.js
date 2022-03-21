@@ -10,10 +10,11 @@ io.on("connection", (socket) => {
     const data = null;
     socket.join(id);
     socket.emit("load-instance", data);
-  });
-  socket.on("send-change", (delta) => {
-    //broadcasting to all client instances
-    socket.broadcast.emit("receive-change", delta);
+
+    socket.on("send-change", (delta) => {
+      //broadcasting to all client instances
+      socket.broadcast.to(id).emit("receive-change", delta);
+    });
   });
   //   socket.disconnect();
   console.log("connected");
