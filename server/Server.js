@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const io = require("socket.io")(3001, {
   cors: {
     origin: "http://localhost:3000",
@@ -7,12 +9,11 @@ const io = require("socket.io")(3001, {
 
 io.on("connection", (socket) => {
   socket.on("get-instance", (id) => {
-    const data = null;
+    const data = "why";
     socket.join(id);
     socket.emit("load-instance", data);
 
     socket.on("send-change", (delta) => {
-      //broadcasting to all client instances
       socket.broadcast.to(id).emit("receive-change", delta);
     });
   });

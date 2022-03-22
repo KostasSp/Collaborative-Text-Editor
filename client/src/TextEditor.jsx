@@ -18,7 +18,6 @@ const TextEditor = () => {
   const wrapper = useCallback((wrapper) => {
     console.log(wrapper);
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
-    console.log("here");
     //no return() for useCallback, so have to empty the div JS-style
     wrapper.innerHTML = "";
     let editorDiv = document.createElement("div");
@@ -27,10 +26,17 @@ const TextEditor = () => {
       theme: "snow",
       modules: { toolbar: toolbarOptions },
     });
-    quill.enable(false);
+    quill.disable();
     quill.setText("Loading document...");
     setShareQuillData(quill);
-    console.log(quill);
+  }, []);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3001");
+    setShareSocketData(socket);
+
+    //"Some side-effects need cleanup: close a socket, clear timers." https://dmitripavlutin.com/react-useeffect-explanation/#3-component-lifecycle
+    return () => socket.disconnect;
   }, []);
 
   useEffect(() => {
@@ -45,13 +51,6 @@ const TextEditor = () => {
   }, [shareQuillData, shareSocketData, id]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3001");
-    setShareSocketData(socket);
-
-    return () => socket.disconnect;
-  }, []);
-
-  useEffect(() => {
     console.log(shareSocketData);
     if (shareSocketData == null || shareQuillData == null) return;
 
@@ -60,7 +59,7 @@ const TextEditor = () => {
       if (source !== "user") return;
       shareSocketData.emit("send-change", delta);
     };
-    //"text-change" = Quill event - updates when the contents of Quill have changed
+    //"text-change" = Quill event - updates when the contents of Quill change
     shareQuillData.on("text-change", detectChange);
 
     return () => {
