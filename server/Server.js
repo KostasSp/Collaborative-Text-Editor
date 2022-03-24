@@ -1,6 +1,8 @@
+const chalk = require("chalk");
 const mongoose = require("mongoose");
+const mongoSchema = require("./MongoSchema");
 
-await mongoose.connect("mongodb://localhost/text-editor");
+mongoose.connect("mongodb://localhost/text-editor");
 
 const io = require("socket.io")(3001, {
   cors: {
@@ -9,16 +11,26 @@ const io = require("socket.io")(3001, {
   },
 });
 
+if (!io.connected) console.log(chalk.red("connecting..."));
+
 io.on("connection", (socket) => {
   socket.on("get-instance", (id) => {
-    const data = "why";
+    const doc = getOrCreateDocument(id);
     socket.join(id);
-    socket.emit("load-instance", data);
+    socket.emit("load-instance", doc.data);
 
     socket.on("send-change", (delta) => {
       socket.broadcast.to(id).emit("receive-change", delta);
     });
   });
   //   socket.disconnect();
-  console.log("connected");
+  console.log(chalk.bold.greenBright("connected"));
 });
+
+async function getOrCreateDocument(id) {
+  if (id == null) return;
+
+  const document = mongoSchema.findById(id);
+  if (document) return document;
+  return await Document.create({ _id: id, data: "" });
+}

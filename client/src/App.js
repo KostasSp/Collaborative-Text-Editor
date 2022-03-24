@@ -8,6 +8,16 @@ import { v4 as uuidV4 } from "uuid";
 function App() {
   return (
     <div className="App">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "10px",
+          paddingRight: "50px",
+        }}
+      >
+        Log in
+      </div>
       <BrowserRouter>
         <Routes>
           <Route
