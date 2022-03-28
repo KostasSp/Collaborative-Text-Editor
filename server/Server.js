@@ -4,7 +4,7 @@ const mongoSchema = require("./MongoSchema");
 
 mongoose.connect("mongodb://localhost/text-editor");
 
-const io = require("socket.io")(3001, {
+const io = require("socket.io")(5001, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -14,16 +14,16 @@ const io = require("socket.io")(3001, {
 if (!io.connected) console.log(chalk.red("connecting..."));
 
 io.on("connection", (socket) => {
-  socket.on("get-instance", (id) => {
-    const doc = getOrCreateDocument(id);
+  socket.on("get-instance", async (id) => {
+    const doc = await getOrCreateDocument(id);
     socket.join(id);
     socket.emit("load-instance", doc.data);
 
     socket.on("send-change", (delta) => {
       socket.broadcast.to(id).emit("receive-change", delta);
     });
-    socket.on("save-doc", (data) => {
-      mongoSchema.findByIdAndUpdate(id, { data: data });
+    socket.on("save-doc", async (data) => {
+      await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
     //   socket.disconnect();
     console.log(chalk.bold.greenBright("connected"));
@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
 const getOrCreateDocument = async (id) => {
   if (id == null) return;
 
-  const document = mongoSchema.findById(id);
+  const document = await mongoSchema.findById(id); //error was here, needed to await findById operation
   if (document) return document;
-  return await mongoSchema.create({ _id: id, data: "test" });
+  return await mongoSchema.create({ _id: id, data: "" });
 };
