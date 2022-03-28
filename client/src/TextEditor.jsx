@@ -5,6 +5,8 @@ import "quill/dist/quill.snow.css";
 import toolbarOptions from "./ToolbarOptions";
 import { useParams } from "react-router-dom";
 
+//https://github.com/mars/heroku-cra-node.git <- full stack hosting
+
 //NEED to sanitise whatever gets stored here (opportunity to have concrete examples on how to do this)
 //Also use this to keep track of notes in multiple files for IRP
 const TextEditor = () => {
@@ -43,7 +45,8 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      shareQuillData.setContents(instance);
+      //still does not get same room's existing contents
+      shareQuillData.setContents(JSON.parse(instance));
       shareQuillData.enable();
     });
 
@@ -80,9 +83,19 @@ const TextEditor = () => {
     };
   }, [shareSocketData, shareQuillData]);
 
-  //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quills
-  //on page), and referencing it to gain access to the div in the useCallback
+  useEffect(() => {
+    if (shareSocketData == null || shareQuillData == null) return;
+
+    const saveToDB = setInterval(() => {
+      shareSocketData.emit("save-doc", shareQuillData.getContents());
+    }, 5000);
+
+    return () => clearInterval(saveToDB);
+  }, [shareSocketData, shareQuillData]);
+
   return (
+    //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quills
+    //on page), and referencing it to gain access to the div in the useCallback
     <div className="container" ref={wrapper}>
       <div>Log in</div>
     </div>

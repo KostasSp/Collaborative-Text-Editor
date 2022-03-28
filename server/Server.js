@@ -22,15 +22,18 @@ io.on("connection", (socket) => {
     socket.on("send-change", (delta) => {
       socket.broadcast.to(id).emit("receive-change", delta);
     });
+    socket.on("save-doc", (data) => {
+      mongoSchema.findByIdAndUpdate(id, { data: data });
+    });
+    //   socket.disconnect();
+    console.log(chalk.bold.greenBright("connected"));
   });
-  //   socket.disconnect();
-  console.log(chalk.bold.greenBright("connected"));
 });
 
-async function getOrCreateDocument(id) {
+const getOrCreateDocument = async (id) => {
   if (id == null) return;
 
   const document = mongoSchema.findById(id);
   if (document) return document;
-  return await Document.create({ _id: id, data: "" });
-}
+  return await mongoSchema.create({ _id: id, data: "test" });
+};

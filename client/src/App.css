@@ -11,9 +11,10 @@ body {
 
 .container .ql-editor {
   background-color: white;
-  width: 8.5in;
-  height: 11in;
-  padding: 1in;
+  /* A4 paper dimensions */
+  width: 21cm;
+  height: 29.7cm;
+  padding: 2.5cm;
   margin: 1rem;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
 }
