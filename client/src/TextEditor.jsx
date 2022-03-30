@@ -34,7 +34,7 @@ const TextEditor = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:5001");
+    const socket = io("http://192.168.1.3:5001");
     setShareSocketData(socket);
 
     //"Some side-effects need cleanup: close a socket, clear timers." https://dmitripavlutin.com/react-useeffect-explanation/#3-component-lifecycle
@@ -45,7 +45,6 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      //still does not get same room's existing contents
       shareQuillData.setContents(instance);
       shareQuillData.enable();
     });
@@ -58,7 +57,7 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     const detectChange = (delta, oldDelta, source) => {
-      //Quill doc - change may be from 'api', so accepting changes from 'user' only
+      //Quill docs - change may also be from 'api', so accepting changes from 'user' only
       if (source !== "user") return;
       shareSocketData.emit("send-change", delta);
     };
