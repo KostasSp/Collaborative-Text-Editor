@@ -6,7 +6,8 @@ mongoose.connect("mongodb://localhost/text-editor");
 
 const io = require("socket.io")(5001, {
   cors: {
-    origin: "http://192.168.1.3:3001",
+    origin: "http://localhost:3000",
+    // origin: "http://192.168.1.3:3000", <- needs ssl to use Auth0, maybe there's some library
     methods: ["GET", "POST"],
   },
 });

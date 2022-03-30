@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Quill from "quill";
 import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
-import toolbarOptions from "./ToolbarOptions";
+import toolbarOptions from "../ToolbarOptions";
 import { useParams } from "react-router-dom";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
@@ -34,7 +34,8 @@ const TextEditor = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://192.168.1.3:5001");
+    // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
+    const socket = io("http://localhost:5001");
     setShareSocketData(socket);
 
     //"Some side-effects need cleanup: close a socket, clear timers." https://dmitripavlutin.com/react-useeffect-explanation/#3-component-lifecycle
@@ -87,7 +88,7 @@ const TextEditor = () => {
 
     const saveToDB = setInterval(() => {
       shareSocketData.emit("save-doc", shareQuillData.getContents());
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(saveToDB);
   }, [shareSocketData, shareQuillData]);

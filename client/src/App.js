@@ -1,7 +1,9 @@
 import "./App.css";
-import TextEditor from "./TextEditor";
+import TextEditor from "./components/TextEditor";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
+import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
 
 //random reminder: add "box" after "github" to any github repository url to run it on the browser
 
@@ -16,7 +18,8 @@ function App() {
           paddingRight: "50px",
         }}
       >
-        Log in
+        <LoginButton />
+        <LogoutButton />
       </div>
       <BrowserRouter>
         <Routes>
