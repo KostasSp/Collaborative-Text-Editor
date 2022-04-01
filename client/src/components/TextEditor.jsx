@@ -49,11 +49,8 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      console.log(instance.ops[0].insert);
       const dirty = instance.ops[0].insert;
       const clean = { ops: [{ insert: sanitizeHtml(dirty) }] };
-      console.log(clean);
-      console.log(instance);
       shareQuillData.setContents(clean);
       shareQuillData.enable();
     });
@@ -68,7 +65,17 @@ const TextEditor = () => {
     const detectChange = (delta, oldDelta, source) => {
       //Quill docs - change may also be from 'api', so accepting changes from 'user' only
       if (source !== "user") return;
-      shareSocketData.emit("send-change", delta);
+      const dirty = delta.ops[1].insert;
+      const clean = {
+        ops: [
+          { retain: delta.ops[0].retain + 1 },
+          { insert: sanitizeHtml(dirty) },
+        ],
+      };
+      console.log(oldDelta);
+      console.log(delta.ops[1].insert);
+      console.log(clean);
+      shareSocketData.emit("send-change", clean);
     };
     //"text-change" = Quill event - updates when the contents of Quill change
     shareQuillData.on("text-change", detectChange);
@@ -102,7 +109,7 @@ const TextEditor = () => {
   }, [shareSocketData, shareQuillData]);
 
   return (
-    //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quills
+    //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
     //on page), and referencing it to gain access to the div in the useCallback
     <div className="container" ref={wrapper}>
       <div>Log in</div>
