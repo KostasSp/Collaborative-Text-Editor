@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
 import toolbarOptions from "../ToolbarOptions";
 import { useParams } from "react-router-dom";
+import sanitizeHtml from "sanitize-html";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
@@ -19,6 +20,7 @@ const TextEditor = () => {
   evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
     console.log(wrapper);
+    console.log("nhiii");
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
     //no return() for useCallback, so have to empty the div JS-style
     wrapper.innerHTML = "";
@@ -30,6 +32,7 @@ const TextEditor = () => {
     });
     quill.disable();
     quill.setText("Loading document...");
+
     setShareQuillData(quill);
   }, []);
 
@@ -46,7 +49,12 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      shareQuillData.setContents(instance);
+      console.log(instance.ops[0].insert);
+      const dirty = instance.ops[0].insert;
+      const clean = { ops: [{ insert: sanitizeHtml(dirty) }] };
+      console.log(clean);
+      console.log(instance);
+      shareQuillData.setContents(clean);
       shareQuillData.enable();
     });
 

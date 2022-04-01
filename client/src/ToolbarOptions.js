@@ -4,7 +4,7 @@ const toolbarOptions = [
   [{ list: "ordered" }, { list: "bullet" }],
   ["bold", "italic", "underline"],
   [{ color: [] }, { background: [] }],
-  [{ script: "sub" }, { script: "super" }],
+  [{ script: "super" }],
   [{ align: [] }],
   ["image", "blockquote", "code-block"],
   ["clean"],
