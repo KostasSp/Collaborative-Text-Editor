@@ -10,16 +10,14 @@ const LoginButton = () => {
     appState: { returnTo: roomID },
   });
 
+  // const { handleRedirectCallback } = useAuth0();
+  // const appState = handleRedirectCallback(loginWithRedirect.appState);
+
+  // console.log(appState);
+  // /* when user clicks one of the log buttons, then return to previous ID (keep track of ID before log
+  // buttons pressed) */
   return (
-    <button
-      onClick={async () =>
-        await loginWithRedirect({
-          redirect_uri: `http://localhost:3000/documents/${roomID}`,
-        })
-      }
-    >
-      Log in
-    </button>
+    <button onClick={async () => await loginWithRedirect()}>Log in</button>
   );
 };
 

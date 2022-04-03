@@ -9,7 +9,11 @@ const clientID = process.env.REACT_APP_AUTH0_CLIENT_ID;
 const roomID = localStorage.getItem("previousRoomURL");
 
 ReactDOM.render(
-  <Auth0Provider domain={domain} clientId={clientID} redirectUri={roomID}>
+  <Auth0Provider
+    domain={domain}
+    clientId={clientID}
+    redirectUri={"http://localhost:3000/CallbackComponent"}
+  >
     {console.log(roomID)}
     <App />
   </Auth0Provider>,

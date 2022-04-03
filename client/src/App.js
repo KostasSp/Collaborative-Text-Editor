@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
+import CallbackComponent from "./components/CallbackComponent";
 
 //random reminder: add "box" after "github" to any github repository url to run it on the browser
 
 function App() {
+  const roomID = localStorage.getItem("previousRoomURL");
   return (
     <div className="App">
       <div
@@ -31,6 +33,10 @@ function App() {
             element={<Navigate to={`/documents/${uuidV4()}`} />}
           ></Route>
           <Route path="/documents/:id" element={<TextEditor />}></Route>
+          <Route
+            path="/CallbackComponent"
+            element={<Navigate to={`/documents/${roomID}`} />}
+          ></Route>
         </Routes>
       </BrowserRouter>
     </div>

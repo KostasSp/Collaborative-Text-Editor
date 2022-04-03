@@ -36,10 +36,7 @@ const TextEditor = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(
-      "previousRoomURL",
-      `http://localhost:3000/documents/${id}`
-    );
+    localStorage.setItem("previousRoomURL", id);
   }, [id]);
 
   useEffect(() => {
