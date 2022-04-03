@@ -22,8 +22,7 @@ const TextEditor = () => {
     console.log(wrapper);
     console.log("nhiii");
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
-    //no return() for useCallback, so have to empty the div JS-style
-    wrapper.innerHTML = "";
+    wrapper.innerHTML = ""; //no return() for useCallback, so have to empty the div JS-style
     let editorDiv = document.createElement("div");
     wrapper.append(editorDiv);
     const quill = new Quill(editorDiv, {
@@ -35,6 +34,13 @@ const TextEditor = () => {
 
     setShareQuillData(quill);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "previousRoomURL",
+      `http://localhost:3000/documents/${id}`
+    );
+  }, [id]);
 
   useEffect(() => {
     // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
@@ -49,9 +55,7 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      const dirty = instance.ops[0].insert;
-      const clean = { ops: [{ insert: sanitizeHtml(dirty) }] };
-      shareQuillData.setContents(clean);
+      shareQuillData.setContents(instance);
       shareQuillData.enable();
     });
 
@@ -65,17 +69,17 @@ const TextEditor = () => {
     const detectChange = (delta, oldDelta, source) => {
       //Quill docs - change may also be from 'api', so accepting changes from 'user' only
       if (source !== "user") return;
-      const dirty = delta.ops[1].insert;
-      const clean = {
+      const dirtyInput = delta.ops[1].insert;
+      const cleanedInput = {
         ops: [
           { retain: delta.ops[0].retain + 1 },
-          { insert: sanitizeHtml(dirty) },
+          { insert: sanitizeHtml(dirtyInput) },
         ],
       };
       console.log(oldDelta);
       console.log(delta.ops[1].insert);
-      console.log(clean);
-      shareSocketData.emit("send-change", clean);
+
+      shareSocketData.emit("send-change", cleanedInput);
     };
     //"text-change" = Quill event - updates when the contents of Quill change
     shareQuillData.on("text-change", detectChange);

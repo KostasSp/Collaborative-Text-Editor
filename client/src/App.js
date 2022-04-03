@@ -18,6 +18,8 @@ function App() {
           paddingRight: "50px",
         }}
       >
+        {/* when user clicks one of the log buttons, then return to previous ID (keep track of ID before log 
+          buttons pressed) */}
         <LoginButton />
         <LogoutButton />
       </div>
