@@ -35,3 +35,10 @@ body {
   top: 0;
   z-index: 1; /* makes this div stay on top */
 }
+
+.top-container {
+  display: flex;
+  align-items: center;
+  justify-content:space-around;
+  flex-direction: row;
+}

@@ -4,26 +4,27 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
-import CallbackComponent from "./components/CallbackComponent";
+import SendToEmail from "./components/SendToEmail";
+import "./components/LogButtons.scss";
+import "./components/SendToEmail.scss";
+import EmailIcon from "@mui/icons-material/Email";
 
 //random reminder: add "box" after "github" to any github repository url to run it on the browser
 
 function App() {
   const roomID = localStorage.getItem("previousRoomURL");
   return (
-    <div className="App">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "10px",
-          paddingRight: "50px",
-        }}
-      >
-        {/* when user clicks one of the log buttons, then return to previous ID (keep track of ID before log 
-          buttons pressed) */}
-        <LoginButton />
-        <LogoutButton />
+    <div>
+      <div className="top-container">
+        <div className="send-email">
+          <SendToEmail />
+          <EmailIcon />
+        </div>
+        <div className="Log-buttons">
+          {/* add "Send Email" icon here, where user can either type email, or simply log in with google for email to be filled in automatically */}
+          <LoginButton />
+          <LogoutButton />
+        </div>
       </div>
       <BrowserRouter>
         <Routes>
