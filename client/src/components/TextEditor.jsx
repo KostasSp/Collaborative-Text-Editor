@@ -5,6 +5,7 @@ import "quill/dist/quill.snow.css";
 import toolbarOptions from "../ToolbarOptions";
 import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
+import SendToEmail from "./SendToEmail";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
@@ -13,13 +14,13 @@ import sanitizeHtml from "sanitize-html";
 const TextEditor = () => {
   const [shareSocketData, setShareSocketData] = useState();
   const [shareQuillData, setShareQuillData] = useState();
+  const [quillContents, setQuillContents] = useState();
   const { id } = useParams();
 
   /*without useEffect cleanup, I get new Quill inst. with every rerender. However, used useCallback to set
   wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
   evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
-    console.log(wrapper);
     console.log("nhiii");
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
     wrapper.innerHTML = ""; //no return() for useCallback, so have to empty the div JS-style
@@ -30,7 +31,7 @@ const TextEditor = () => {
       modules: { toolbar: toolbarOptions },
     });
     quill.disable();
-    quill.setText("Loading document...");
+    quill.setText("Connecting to the server...");
 
     setShareQuillData(quill);
   }, []);
@@ -52,6 +53,7 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
+      setQuillContents(instance);
       shareQuillData.setContents(instance);
       shareQuillData.enable();
     });
@@ -60,12 +62,12 @@ const TextEditor = () => {
   }, [shareQuillData, shareSocketData, id]);
 
   useEffect(() => {
-    console.log(shareSocketData);
     if (shareSocketData == null || shareQuillData == null) return;
 
     const detectChange = (delta, oldDelta, source) => {
-      //Quill docs - change may also be from 'api', so accepting changes from 'user' only
+      //Quill.js docs - change may also be from 'api', so accepting changes from 'user' only
       if (source !== "user") return;
+      //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
       const dirtyInput = delta.ops[1].insert;
       const cleanedInput = {
         ops: [
@@ -73,8 +75,8 @@ const TextEditor = () => {
           { insert: sanitizeHtml(dirtyInput) },
         ],
       };
-      console.log(oldDelta);
-      console.log(delta.ops[1].insert);
+
+      console.log(shareQuillData.getContents());
 
       shareSocketData.emit("send-change", cleanedInput);
     };
@@ -114,6 +116,7 @@ const TextEditor = () => {
     //on page), and referencing it to gain access to the div in the useCallback
     <div className="container" ref={wrapper}>
       <div>Log in</div>
+      <SendToEmail quillContents={quillContents} />
     </div>
   );
 };
