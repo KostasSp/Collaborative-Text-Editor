@@ -65,7 +65,7 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     const detectChange = (delta, oldDelta, source) => {
-      //Quill.js docs - change may also be from 'api', so accepting changes from 'user' only
+      //Quill.js docs - change may also be from source 'api', so I'm accepting changes from 'user' only
       if (source !== "user") return;
       //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
       const dirtyInput = delta.ops[1].insert;
@@ -80,7 +80,7 @@ const TextEditor = () => {
 
       shareSocketData.emit("send-change", cleanedInput);
     };
-    //"text-change" = Quill event - updates when the contents of Quill change
+    //"text-change" = Quill.js event - updates when the contents of Quill change
     shareQuillData.on("text-change", detectChange);
 
     return () => {
@@ -115,7 +115,6 @@ const TextEditor = () => {
     //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
     //on page), and referencing it to gain access to the div in the useCallback
     <div className="container" ref={wrapper}>
-      <div>Log in</div>
       <SendToEmail quillContents={quillContents} />
     </div>
   );

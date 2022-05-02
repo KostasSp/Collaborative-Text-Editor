@@ -1,7 +1,7 @@
 import React from "react";
 
 const EmailPreview = () => {
-  return <div>EmailPreview</div>;
+  return <div>Email Preview here</div>;
 };
 
 export default EmailPreview;

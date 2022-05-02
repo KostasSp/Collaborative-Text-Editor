@@ -1,7 +1,6 @@
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 const mongoSchema = require("./MongoSchema");
-const sanitizeHtml = require("sanitize-html");
 
 mongoose.connect("mongodb://localhost/text-editor");
 
@@ -27,10 +26,7 @@ io.on("connection", (socket) => {
       socket.broadcast.to(id).emit("receive-change", delta);
     });
     socket.on("save-doc", async (data) => {
-      const dirty = data;
-      const clean = sanitizeHtml(dirty);
-
-      await mongoSchema.findByIdAndUpdate(id, { data: dirty });
+      await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
     //   socket.disconnect();
     console.log(chalk.bold.greenBright("connected"));
