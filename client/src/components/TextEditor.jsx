@@ -6,24 +6,25 @@ import toolbarOptions from "../ToolbarOptions";
 import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
 import SendToEmail from "./SendToEmail";
+import { Link, useNavigate } from "react-router-dom";
+import EmailPreview from "./EmailPreview";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
-//NEED to sanitise whatever gets stored here (opportunity to have concrete examples on how to do this)
-//Also use this to keep track of notes in multiple files for IRP
+//maybe add whatsapp and messenger link sharing, for collaboration
 const TextEditor = () => {
   const [shareSocketData, setShareSocketData] = useState();
   const [shareQuillData, setShareQuillData] = useState();
   const [quillContents, setQuillContents] = useState();
   const { id } = useParams();
 
-  /*without useEffect cleanup, I get new Quill inst. with every rerender. However, used useCallback to set
+  /*without useEffect cleanup, I get new Quill inst. with every rerender. Used useCallback to set
   wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
   evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
-    console.log("nhiii");
+    console.log("use call back ran");
     if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
-    wrapper.innerHTML = ""; //no return() for useCallback, so have to empty the div JS-style
+    wrapper.innerHTML = ""; //no return() for useCallback - have to empty the div JS-style
     let editorDiv = document.createElement("div");
     wrapper.append(editorDiv);
     const quill = new Quill(editorDiv, {
@@ -53,7 +54,6 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
-      setQuillContents(instance);
       shareQuillData.setContents(instance);
       shareQuillData.enable();
     });
@@ -76,7 +76,8 @@ const TextEditor = () => {
         ],
       };
 
-      console.log(shareQuillData.getContents());
+      console.log(shareQuillData.getContents().ops[0].insert);
+      console.log(quillContents);
 
       shareSocketData.emit("send-change", cleanedInput);
     };
@@ -95,6 +96,7 @@ const TextEditor = () => {
       shareQuillData.updateContents(delta);
     };
     shareSocketData.on("receive-change", detectChange);
+    console.log(detectChange());
 
     return () => {
       shareSocketData.off("receive-change", detectChange);
@@ -106,6 +108,7 @@ const TextEditor = () => {
 
     const saveToDB = setInterval(() => {
       shareSocketData.emit("save-doc", shareQuillData.getContents());
+      setQuillContents(shareQuillData.getContents());
     }, 1000);
 
     return () => clearInterval(saveToDB);
@@ -114,8 +117,10 @@ const TextEditor = () => {
   return (
     //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
     //on page), and referencing it to gain access to the div in the useCallback
-    <div className="container" ref={wrapper}>
-      <SendToEmail quillContents={quillContents} />
+    <div>
+      <div className="container" ref={wrapper}>
+        {/* {typeof quillContents !== "undefined" && console.log(quillContents)} */}
+      </div>
     </div>
   );
 };

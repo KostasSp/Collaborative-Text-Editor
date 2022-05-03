@@ -1,6 +1,6 @@
 import "./App.css";
 import TextEditor from "./components/TextEditor";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
@@ -10,8 +10,6 @@ import "./components/SendToEmail.scss";
 import EmailIcon from "@mui/icons-material/Email";
 import EmailPreview from "./components/EmailPreview";
 
-//random reminder: add "box" after "github" to any github repository url to run it on the browser
-
 function App() {
   const roomID = localStorage.getItem("previousRoomURL");
   return (
@@ -19,7 +17,10 @@ function App() {
       <BrowserRouter>
         <div className="top-container">
           <div className="send-email">
-            <SendToEmail />
+            <Link className="email-link" to={"/email"} state={"test"}>
+              Send progress to Email {/*  add download option as well here? */}
+            </Link>
+
             <EmailIcon />
           </div>
           <div className="Log-buttons">
@@ -28,7 +29,6 @@ function App() {
             <LogoutButton />
           </div>
         </div>
-
         <Routes>
           <Route
             path="/"
