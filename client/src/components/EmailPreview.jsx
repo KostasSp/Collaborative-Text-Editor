@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./EmailPreview.scss";
+import SendToEmail from "./SendToEmail";
 
 //maybe make this preview look in email template
 const EmailPreview = () => {
@@ -9,6 +10,7 @@ const EmailPreview = () => {
   const navigate = useNavigate();
   const [socketIP, setSocketIP] = useState();
   const [contents, setContents] = useState();
+  const textLineLength = 70;
   const id = localStorage.getItem("previousRoomURL");
 
   useEffect(() => {
@@ -33,7 +35,8 @@ const EmailPreview = () => {
     let formattedText = text
       .split("")
       .reduce(
-        (acc, iter, index) => acc + iter + (index % 15 === 0 ? "\n" : ""),
+        (acc, iter, index) =>
+          acc + iter + (index % textLineLength === 0 ? "\n" : ""),
         ""
       );
     return formattedText;
@@ -41,12 +44,23 @@ const EmailPreview = () => {
 
   return (
     <div>
-      <button onClick={() => navigate(-1)}>Go back</button>
+      <button onClick={() => navigate(-1)}>go back</button>
       {/*  add download option here? */}
       <div className="email-preview">
-        {typeof contents !== "undefined" && formatText(contents.ops[0].insert)}
-        {typeof contents !== "undefined" && contents.ops[0].insert}
+        <table>
+          <thead>
+            <tr>
+              <th>Preview</th>
+            </tr>
+          </thead>
+          <tbody>
+            {typeof contents !== "undefined" &&
+              formatText(contents.ops[0].insert)}
+            {/* {typeof contents !== "undefined" && contents.ops[0].insert} */}
+          </tbody>
+        </table>
       </div>
+      <SendToEmail />
     </div>
   );
 };

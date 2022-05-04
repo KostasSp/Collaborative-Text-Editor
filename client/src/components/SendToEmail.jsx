@@ -8,13 +8,8 @@ const SendToEmail = (props) => {
   const [data, setData] = useState("");
 
   return (
-    <div>
-      <Link className="email-link" to={"/email"} state={"test"}>
-        {/* {console.log(data)} */}
-        Send progress to Email! {/*  add download option as well here? */}
-      </Link>
+    <div className="send-email-button">
       {/* <EmailPreview show={props.quillCurrentContent} aseME={"lol"} /> */}
-      {props.test}
       <button
         onClick={() =>
           typeof props.quillCurrentContent === "undefined" &&
@@ -22,12 +17,8 @@ const SendToEmail = (props) => {
           console.log("hey hey hey")
         }
       >
-        see preview
+        Send
       </button>
-      {/* {console.log(props.quillCurrentContent)} */}
-      {/* {typeof props.quillContents !== "undefined" &&
-        console.log(props.quillContents.ops[0].insert)} */}
-      {/* <EmailPreview show={props.quillCurrentContent} aseME={"loooool"} /> */}
     </div>
   );
 };

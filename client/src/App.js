@@ -16,12 +16,11 @@ function App() {
     <div>
       <BrowserRouter>
         <div className="top-container">
-          <div className="send-email">
+          <div className="send-email-message">
             {/* remove link on click, maybe empty the element JS-style? */}
             <Link className="email-link" to={"/email"} state={"test"}>
               Send progress to Email
             </Link>
-
             <EmailIcon />
           </div>
           <div className="Log-buttons">
