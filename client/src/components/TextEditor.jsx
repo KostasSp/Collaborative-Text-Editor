@@ -118,9 +118,7 @@ const TextEditor = () => {
     //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
     //on page), and referencing it to gain access to the div in the useCallback
     <div>
-      <div className="container" ref={wrapper}>
-        {/* {typeof quillContents !== "undefined" && console.log(quillContents)} */}
-      </div>
+      <div className="container" ref={wrapper}></div>
     </div>
   );
 };

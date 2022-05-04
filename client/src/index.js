@@ -14,7 +14,6 @@ ReactDOM.render(
     clientId={clientID}
     redirectUri={"http://localhost:3000/CallbackComponent"}
   >
-    {console.log(roomID)}
     <App />
   </Auth0Provider>,
   document.getElementById("root")

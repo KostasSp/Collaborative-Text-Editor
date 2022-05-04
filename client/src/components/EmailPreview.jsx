@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import "./EmailPreview.scss";
 
-const EmailPreview = (props) => {
+//maybe make this preview look in email template
+const EmailPreview = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const [socketIP, setSocketIP] = useState();
   const [contents, setContents] = useState();
   const id = localStorage.getItem("previousRoomURL");
 
   useEffect(() => {
-    // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
     const socket = io("http://localhost:5001");
     setSocketIP(socket);
-    //"Some side-effects need cleanup: close a socket, clear timers." https://dmitripavlutin.com/react-useeffect-explanation/#3-component-lifecycle
+
     return () => socket.disconnect;
   }, []);
 
@@ -24,20 +26,26 @@ const EmailPreview = (props) => {
       console.log(instance);
     });
 
-    // shareSocketData.emit("get-instance", id);
+    socketIP.emit("get-instance", id);
   }, [socketIP, id]);
+
+  const formatText = (text) => {
+    let formattedText = text
+      .split("")
+      .reduce(
+        (acc, iter, index) => acc + iter + (index % 15 === 0 ? "\n" : ""),
+        ""
+      );
+    return formattedText;
+  };
 
   return (
     <div>
-      {/* {props.show.ops[0].insert}!! */}
-      {console.log(contents)}
-      {typeof props.show !== "undefined" && props.show.ops[0].insert}
-      <div
-        style={{ marginTop: "15px", display: "flex", justifyContent: "center" }}
-      >
-        {console.log(props.show)}
-        {state}
-        {props.aseME}
+      <button onClick={() => navigate(-1)}>Go back</button>
+      {/*  add download option here? */}
+      <div className="email-preview">
+        {typeof contents !== "undefined" && formatText(contents.ops[0].insert)}
+        {typeof contents !== "undefined" && contents.ops[0].insert}
       </div>
     </div>
   );

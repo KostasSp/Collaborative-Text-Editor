@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 const mongoSchema = require("./MongoSchema");
+const date = require("./DateFormat");
 
 mongoose.connect("mongodb://localhost/text-editor");
 
@@ -17,6 +18,7 @@ if (!io.connected) console.log(chalk.red("connecting..."));
 
 io.on("connection", (socket) => {
   socket.on("get-instance", async (id) => {
+    console.log(date);
     const doc = await getOrCreateDocument(id);
     socket.join(id);
     socket.emit("load-instance", doc.data);
@@ -28,7 +30,7 @@ io.on("connection", (socket) => {
     socket.on("save-doc", async (data) => {
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
-    //   socket.disconnect();
+
     console.log(chalk.bold.greenBright("connected"));
   });
 });

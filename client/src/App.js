@@ -17,8 +17,9 @@ function App() {
       <BrowserRouter>
         <div className="top-container">
           <div className="send-email">
+            {/* remove link on click, maybe empty the element JS-style? */}
             <Link className="email-link" to={"/email"} state={"test"}>
-              Send progress to Email {/*  add download option as well here? */}
+              Send progress to Email
             </Link>
 
             <EmailIcon />
