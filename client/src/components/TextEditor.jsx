@@ -96,7 +96,6 @@ const TextEditor = () => {
       shareQuillData.updateContents(delta);
     };
     shareSocketData.on("receive-change", detectChange);
-    console.log(detectChange());
 
     return () => {
       shareSocketData.off("receive-change", detectChange);
@@ -115,8 +114,8 @@ const TextEditor = () => {
   }, [shareSocketData, shareQuillData]);
 
   return (
-    //setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
-    //on page), and referencing it to gain access to the div in the useCallback
+    /*setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
+    on page), and referencing it to gain access to the div in the useCallback*/
     <div>
       <div className="container" ref={wrapper}></div>
     </div>
