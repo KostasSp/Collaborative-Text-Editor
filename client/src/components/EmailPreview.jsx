@@ -12,6 +12,7 @@ const EmailPreview = () => {
   const [contents, setContents] = useState();
   const textLineLength = 70;
   const id = localStorage.getItem("previousRoomURL");
+  const [formattedText, setFormattedText] = useState("");
 
   useEffect(() => {
     const socket = io("http://localhost:5001");
@@ -55,12 +56,13 @@ const EmailPreview = () => {
           </thead>
           <tbody>
             {typeof contents !== "undefined" &&
-              formatText(contents.ops[0].insert)}
+              setFormattedText(formatText(contents.ops[0].insert))}
             {/* {typeof contents !== "undefined" && contents.ops[0].insert} */}
           </tbody>
         </table>
       </div>
-      <SendToEmail />
+
+      <SendToEmail text={formattedText} />
     </div>
   );
 };

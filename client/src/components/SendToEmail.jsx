@@ -6,20 +6,28 @@ import emailjs from "@emailjs/browser";
 const SendToEmail = (props) => {
   //add message "login to automatically fill out email address",
   //also show preview of what would be sent (format it for email viewing first)
-  const [data, setData] = useState("");
+  const [data, setData] = useState("test");
   const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3";
-  const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID;
+  const { REACT_APP_TEMPLATE_ID } = process.env;
 
   const sendEmail = (e) => {
+    console.log(REACT_APP_TEMPLATE_ID);
     e.preventDefault();
-    emailjs.sendForm("gmail", TEMPLATE_ID, e.target, PUBLIC_KEY).then(
-      (result) => {
-        console.log(result.text);
-      },
-      (error) => {
-        console.log(error.text);
-      }
-    );
+    emailjs
+      .sendForm(
+        "default_service",
+        `${REACT_APP_TEMPLATE_ID}`,
+        e.target,
+        PUBLIC_KEY
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
     e.target.reset();
   };
 
@@ -73,7 +81,9 @@ const SendToEmail = (props) => {
                 placeholder="Your message"
                 name="message"
                 required
-              ></textarea>
+              >
+                {props.text !== "undefined" && props.text}
+              </textarea>
             </div>
             <div className="col-8 pt-3 mx-auto">
               <input
