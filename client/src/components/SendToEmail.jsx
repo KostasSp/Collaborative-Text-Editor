@@ -4,33 +4,27 @@ import EmailPreview from "./EmailPreview";
 import emailjs from "@emailjs/browser";
 
 const SendToEmail = (props) => {
-  //this should navigate to its own path, and add message "login to automatically fill out email address",
+  //add message "login to automatically fill out email address",
   //also show preview of what would be sent (format it for email viewing first)
   const [data, setData] = useState("");
+  const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3";
+  const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID;
 
   const sendEmail = (e) => {
     e.preventDefault();
-    emailjs
-      .sendForm(
-        "gmail",
-        "email_template",
-        e.target,
-        "user_JABO21I8Gm6sxByJH17Nu"
-      )
-      .then(
-        (result) => {
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
+    emailjs.sendForm("gmail", TEMPLATE_ID, e.target, PUBLIC_KEY).then(
+      (result) => {
+        console.log(result.text);
+      },
+      (error) => {
+        console.log(error.text);
+      }
+    );
     e.target.reset();
   };
 
   return (
     <div className="send-email-button">
-      {/* <EmailPreview show={props.quillCurrentContent} aseME={"lol"} /> */}
       <button
         onClick={() =>
           typeof props.quillCurrentContent === "undefined" &&
@@ -49,6 +43,7 @@ const SendToEmail = (props) => {
                 className="form-control"
                 placeholder="Name"
                 name="name"
+                required
               />
             </div>
             <div className="col-8 form-group pt-2 mx-auto">
@@ -57,6 +52,7 @@ const SendToEmail = (props) => {
                 className="form-control"
                 placeholder="Email Address"
                 name="email"
+                required
               />
             </div>
             <div className="col-8 form-group pt-2 mx-auto">
@@ -65,6 +61,7 @@ const SendToEmail = (props) => {
                 className="form-control"
                 placeholder="Subject"
                 name="subject"
+                required
               />
             </div>
             <div className="col-8 form-group pt-2 mx-auto">
@@ -75,6 +72,7 @@ const SendToEmail = (props) => {
                 rows="8"
                 placeholder="Your message"
                 name="message"
+                required
               ></textarea>
             </div>
             <div className="col-8 pt-3 mx-auto">
