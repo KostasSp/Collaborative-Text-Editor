@@ -55,8 +55,8 @@ const EmailPreview = () => {
 
   return (
     <div>
-      <button className="button__arrow--left" onClick={() => navigate(-1)}>
-        go back
+      <button className="button-arrow-left" onClick={() => navigate(-1)}>
+        {String.fromCharCode(8592)}
       </button>
       {/*  add download option here? */}
       <div className="email-preview-box">
@@ -66,15 +66,7 @@ const EmailPreview = () => {
               <th>Progress preview</th>
             </tr>
           </thead>
-          <tbody>
-            {/* {(typeof contents !== "undefined") &&
-            formatText(contents.ops[0].insert) +
-              typeof formatText(contents.ops[1].insert !== "undefined")
-              ? formatText(contents.ops[1].insert !== "undefined")
-              : ""} */}
-            {checkUndefined(contents)}
-            {console.log(contents)}
-          </tbody>
+          <tbody>{checkUndefined(contents)}</tbody>
         </table>
       </div>
       <SendToEmail text={checkUndefined(contents)} />

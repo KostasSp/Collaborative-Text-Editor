@@ -3,13 +3,18 @@
   background-color: antiquewhite;
   display: flex;
   justify-content: center;
-  margin: 20px 380px 40px 380px;
+  margin: 0px 380px 40px 380px;
   outline-style: dashed;
 }
 
-.button__arrow--left {
-  /* Edges */
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-  border-left: 1px solid rgba(0, 0, 0, 0.3);
-  transform: translateX(25%) rotate(45deg);
+.button-arrow-left {
+  background-color: #f3f3f3;
+  width: 100px;
+  font-size: 45px;
+  border: none;
+}
+
+.button-arrow-left:hover {
+  background-color: rgb(219, 214, 211);
+  transition: 1s;
 }

@@ -113,9 +113,9 @@ const TextEditor = () => {
   }, [shareSocketData, shareQuillData]);
 
   return (
+    /* setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
+      on page), and referencing it to gain access to the div in the useCallback */
     <div>
-      {/* setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
-      on page), and referencing it to gain access to the div in the useCallback  */}
       <div className="container" ref={wrapper}></div>
     </div>
   );

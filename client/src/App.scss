@@ -54,12 +54,13 @@ body {
 a {
   color: #0a0a0a;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 a:visited {
   color: #0a0a0a;
-}
-
-.Log-buttons {
 }
