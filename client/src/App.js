@@ -21,7 +21,7 @@ function App() {
             <Link className="email-link" to={"/email"} state={"test"}>
               Send progress to Email
             </Link>
-            <EmailIcon />
+            <EmailIcon style={{ fontSize: "18px" }} />
           </div>
           <div className="Log-buttons">
             {/* add "Send Email" icon here, where user can either type email, or simply log in with google for email to be filled in automatically */}

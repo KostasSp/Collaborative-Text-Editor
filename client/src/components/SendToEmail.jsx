@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EmailPreview from "./EmailPreview";
 import emailjs from "@emailjs/browser";
 
 const SendToEmail = (props) => {
-  //add message "login to automatically fill out email address",
+  //add message "login to automatically fill out email address (and name?)",
   //also show preview of what would be sent (format it for email viewing first)
-  const [data, setData] = useState("test");
-  const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3";
+  const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3"; //public key, no point hiding it in env
   const { REACT_APP_TEMPLATE_ID } = process.env;
 
   const sendEmail = (e) => {
@@ -33,15 +32,6 @@ const SendToEmail = (props) => {
 
   return (
     <div className="send-email-button">
-      <button
-        onClick={() =>
-          typeof props.quillCurrentContent === "undefined" &&
-          console.log("hey hey hey")
-        }
-      >
-        Send
-      </button>
-
       <div className="container">
         <form onSubmit={sendEmail}>
           <div className="row pt-5 mx-auto">
@@ -51,7 +41,6 @@ const SendToEmail = (props) => {
                 className="form-control"
                 placeholder="Name"
                 name="name"
-                required
               />
             </div>
             <div className="col-8 form-group pt-2 mx-auto">
@@ -69,21 +58,19 @@ const SendToEmail = (props) => {
                 className="form-control"
                 placeholder="Subject"
                 name="subject"
-                required
               />
             </div>
             <div className="col-8 form-group pt-2 mx-auto">
               <textarea
                 className="form-control"
                 id=""
-                cols="30"
-                rows="8"
+                cols="40"
+                rows="6"
                 placeholder="Your message"
                 name="message"
+                value={props.text}
                 required
-              >
-                {props.text !== "undefined" && props.text}
-              </textarea>
+              ></textarea>
             </div>
             <div className="col-8 pt-3 mx-auto">
               <input

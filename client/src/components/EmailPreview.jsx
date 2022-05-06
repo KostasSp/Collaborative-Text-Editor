@@ -10,9 +10,8 @@ const EmailPreview = () => {
   const navigate = useNavigate();
   const [socketIP, setSocketIP] = useState();
   const [contents, setContents] = useState();
-  const textLineLength = 70;
+  const textLineLength = 55;
   const id = localStorage.getItem("previousRoomURL");
-  const [formattedText, setFormattedText] = useState("");
 
   useEffect(() => {
     const socket = io("http://localhost:5001");
@@ -26,7 +25,6 @@ const EmailPreview = () => {
 
     socketIP.once("load-instance", (instance) => {
       setContents(instance);
-      console.log(instance);
     });
 
     socketIP.emit("get-instance", id);
@@ -51,18 +49,22 @@ const EmailPreview = () => {
         <table>
           <thead>
             <tr>
-              <th>Preview</th>
+              <th>Progress preview</th>
             </tr>
           </thead>
           <tbody>
             {typeof contents !== "undefined" &&
-              setFormattedText(formatText(contents.ops[0].insert))}
+              formatText(contents.ops[0].insert)}
             {/* {typeof contents !== "undefined" && contents.ops[0].insert} */}
           </tbody>
         </table>
       </div>
-
-      <SendToEmail text={formattedText} />
+      <SendToEmail
+        text={
+          typeof contents !== "undefined" && formatText(contents.ops[0].insert)
+        }
+      />
+      )
     </div>
   );
 };
