@@ -1,4 +1,13 @@
-.send-email-button {
+.send-email-form {
   display: flex;
   justify-content: center;
+}
+
+input[type="submit"] {
+  background-color: #0452aa;
+  border: none;
+  color: white;
+  padding: 7px 25px;
+  margin: 2px 0px;
+  cursor: pointer;
 }

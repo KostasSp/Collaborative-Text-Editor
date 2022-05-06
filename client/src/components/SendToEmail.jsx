@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import EmailPreview from "./EmailPreview";
 import emailjs from "@emailjs/browser";
 
 const SendToEmail = (props) => {
@@ -10,7 +7,6 @@ const SendToEmail = (props) => {
   const { REACT_APP_TEMPLATE_ID } = process.env;
 
   const sendEmail = (e) => {
-    console.log(REACT_APP_TEMPLATE_ID);
     e.preventDefault();
     emailjs
       .sendForm(
@@ -31,7 +27,7 @@ const SendToEmail = (props) => {
   };
 
   return (
-    <div className="send-email-button">
+    <div className="send-email-form">
       <div className="container">
         <form onSubmit={sendEmail}>
           <div className="row pt-5 mx-auto">
@@ -76,7 +72,7 @@ const SendToEmail = (props) => {
               <input
                 type="submit"
                 className="btn btn-info"
-                value="Send Message"
+                value="Send Email"
               ></input>
             </div>
           </div>

@@ -55,7 +55,6 @@ const EmailPreview = () => {
           <tbody>
             {typeof contents !== "undefined" &&
               formatText(contents.ops[0].insert)}
-            {/* {typeof contents !== "undefined" && contents.ops[0].insert} */}
           </tbody>
         </table>
       </div>
@@ -64,7 +63,6 @@ const EmailPreview = () => {
           typeof contents !== "undefined" && formatText(contents.ops[0].insert)
         }
       />
-      )
     </div>
   );
 };

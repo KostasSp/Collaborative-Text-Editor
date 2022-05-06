@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Quill from "quill";
 import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
 import toolbarOptions from "../ToolbarOptions";
 import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
-import SendToEmail from "./SendToEmail";
-import { Link, useNavigate } from "react-router-dom";
-import EmailPreview from "./EmailPreview";
+import { Link } from "react-router-dom";
+import EmailIcon from "@mui/icons-material/Email";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
@@ -46,7 +45,7 @@ const TextEditor = () => {
     const socket = io("http://localhost:5001");
     setShareSocketData(socket);
 
-    //"Some side-effects need cleanup: close a socket, clear timers." https://dmitripavlutin.com/react-useeffect-explanation/#3-component-lifecycle
+    //"Some side-effects need cleanup: close a socket, clear timers."
     return () => socket.disconnect;
   }, []);
 
@@ -114,9 +113,9 @@ const TextEditor = () => {
   }, [shareSocketData, shareQuillData]);
 
   return (
-    /*setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
-    on page), and referencing it to gain access to the div in the useCallback*/
     <div>
+      {/* setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
+      on page), and referencing it to gain access to the div in the useCallback  */}
       <div className="container" ref={wrapper}></div>
     </div>
   );

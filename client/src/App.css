@@ -51,3 +51,16 @@ body {
   font-size: 17px;
   margin-bottom: 2px;
 }
+
+a {
+  color: #0a0a0a;
+  text-decoration: none;
+}
+
+/* Unvisited link  */
+a:visited {
+  color: #0a0a0a;
+}
+
+/* Visited link    */
+
