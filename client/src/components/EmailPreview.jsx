@@ -54,13 +54,18 @@ const EmailPreview = () => {
           </thead>
           <tbody>
             {typeof contents !== "undefined" &&
-              formatText(contents.ops[0].insert)}
+              formatText(contents.ops[0].insert) +
+                formatText(contents.ops[1].insert)}
+            {console.log(contents)}
           </tbody>
         </table>
       </div>
       <SendToEmail
         text={
-          typeof contents !== "undefined" && formatText(contents.ops[0].insert)
+          typeof contents !== "undefined" &&
+          formatText(
+            contents.ops[0].insert + formatText(contents.ops[1].insert)
+          )
         }
       />
     </div>

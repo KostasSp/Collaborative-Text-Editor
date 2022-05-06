@@ -39,7 +39,7 @@ body {
 .top-container {
   display: flex;
   align-items: center;
-  justify-content:space-around;
+  justify-content: space-around;
   flex-direction: row;
 }
 
@@ -48,19 +48,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
   margin-bottom: 2px;
 }
 
 a {
   color: #0a0a0a;
   text-decoration: none;
+  font-size: 17px;
 }
 
-/* Unvisited link  */
 a:visited {
   color: #0a0a0a;
 }
 
-/* Visited link    */
-
+.Log-buttons {
+}
