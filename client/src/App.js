@@ -19,9 +19,9 @@ function App() {
           <div className="send-email-message">
             {/* remove link on click, maybe empty the element JS-style? */}
             <Link className="email-link" to={"/email"} state={"test"}>
-              Send progress to Email
+              send progress to Email
             </Link>
-            <EmailIcon style={{ fontSize: "18px" }} />
+            <EmailIcon style={{ fontSize: "17px", color: "blue" }} />
           </div>
           <div className="Log-buttons">
             {/* add "Send Email" icon here, where user can either type email, or simply log in with google for email to be filled in automatically */}

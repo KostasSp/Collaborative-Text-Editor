@@ -1,8 +1,15 @@
-.email-preview {
+.email-preview-box {
   color: rgb(4, 8, 22);
   background-color: antiquewhite;
   display: flex;
   justify-content: center;
   margin: 20px 380px 40px 380px;
   outline-style: dashed;
+}
+
+.button__arrow--left {
+  /* Edges */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  border-left: 1px solid rgba(0, 0, 0, 0.3);
+  transform: translateX(25%) rotate(45deg);
 }

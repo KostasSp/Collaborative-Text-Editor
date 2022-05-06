@@ -41,11 +41,25 @@ const EmailPreview = () => {
     return formattedText;
   };
 
+  const checkUndefined = (object) => {
+    let result;
+    if (typeof object !== "undefined") {
+      typeof object.ops[1] !== "undefined"
+        ? (result =
+            formatText(object.ops[0].insert) + formatText(object.ops[1].insert))
+        : (result = formatText(object.ops[0].insert));
+
+      return result;
+    }
+  };
+
   return (
     <div>
-      <button onClick={() => navigate(-1)}>go back</button>
+      <button className="button__arrow--left" onClick={() => navigate(-1)}>
+        go back
+      </button>
       {/*  add download option here? */}
-      <div className="email-preview">
+      <div className="email-preview-box">
         <table>
           <thead>
             <tr>
@@ -53,21 +67,17 @@ const EmailPreview = () => {
             </tr>
           </thead>
           <tbody>
-            {typeof contents !== "undefined" &&
-              formatText(contents.ops[0].insert) +
-                formatText(contents.ops[1].insert)}
+            {/* {(typeof contents !== "undefined") &&
+            formatText(contents.ops[0].insert) +
+              typeof formatText(contents.ops[1].insert !== "undefined")
+              ? formatText(contents.ops[1].insert !== "undefined")
+              : ""} */}
+            {checkUndefined(contents)}
             {console.log(contents)}
           </tbody>
         </table>
       </div>
-      <SendToEmail
-        text={
-          typeof contents !== "undefined" &&
-          formatText(
-            contents.ops[0].insert + formatText(contents.ops[1].insert)
-          )
-        }
-      />
+      <SendToEmail text={checkUndefined(contents)} />
     </div>
   );
 };
