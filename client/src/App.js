@@ -1,14 +1,14 @@
 import "./App.scss";
-import TextEditor from "./components/TextEditor";
+import TextEditor from "./components/text-editor/TextEditor";
 import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
-import LoginButton from "./components/LoginButton";
-import LogoutButton from "./components/LogoutButton";
-import SendToEmail from "./components/SendToEmail";
-import "./components/LogButtons.scss";
-import "./components/SendToEmail.scss";
+import LoginButton from "./components/log-buttons/LoginButton";
+import LogoutButton from "./components/log-buttons/LogoutButton";
+import SendToEmail from "./components/send-email/SendToEmail";
+import "./components/log-buttons/LogButtons.scss";
+import "./components/send-email/SendToEmail.scss";
 import EmailIcon from "@mui/icons-material/Email";
-import EmailPreview from "./components/EmailPreview";
+import EmailPreview from "./components/email-preview/EmailPreview";
 
 function App() {
   const roomID = localStorage.getItem("previousRoomURL");

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Quill from "quill";
 import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
-import toolbarOptions from "../ToolbarOptions";
+import toolbarOptions from "../../utility/ToolbarOptions";
 import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
 import { Link } from "react-router-dom";

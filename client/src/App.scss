@@ -33,7 +33,7 @@ body {
   justify-content: center;
   position: sticky;
   top: 0;
-  z-index: 1; /* makes this div stay on top */
+  z-index: 1;
 }
 
 .top-container {
@@ -63,4 +63,8 @@ a:hover {
 
 a:visited {
   color: #0a0a0a;
+}
+
+.disabled-link {
+  pointer-events: none;
 }

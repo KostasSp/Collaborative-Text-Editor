@@ -16,5 +16,6 @@
 
 .button-arrow-left:hover {
   background-color: rgb(219, 214, 211);
-  transition: 1s;
+  transform: scale(1.15, 1.15);
+  animation: jiggle 0.5s infinite linear;
 }

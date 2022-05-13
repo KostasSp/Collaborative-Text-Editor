@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./EmailPreview.scss";
-import SendToEmail from "./SendToEmail";
+import SendToEmail from "../send-email/SendToEmail";
 
 //maybe make this preview look in email template
 const EmailPreview = () => {
