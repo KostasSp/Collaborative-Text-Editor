@@ -22,7 +22,7 @@ const TextEditor = () => {
   evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
     console.log("use call back ran");
-    if (wrapper === null) return; //wrapper is null at first at every rerender, so without this app crashes
+    if (wrapper === null) return;
     wrapper.innerHTML = ""; //no return() for useCallback - have to empty the div JS-style
     let editorDiv = document.createElement("div");
     wrapper.append(editorDiv);
@@ -113,8 +113,8 @@ const TextEditor = () => {
   }, [shareSocketData, shareQuillData]);
 
   return (
-    /* setting the new Quill in this div so I can "clean" it at every rerender (otherwise multiple Quill instances
-      on page), and referencing it to gain access to the div in the useCallback */
+    /* setting the new Quill in this div so I can "clean" it at every rerender (otherwise I get multiple 
+      Quill instances on page), and referencing it to gain access to the div in the useCallback */
     <div>
       <div className="container" ref={wrapper}></div>
     </div>

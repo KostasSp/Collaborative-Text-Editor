@@ -4,7 +4,6 @@ import { io } from "socket.io-client";
 import "./EmailPreview.scss";
 import SendToEmail from "../send-email/SendToEmail";
 
-//maybe make this preview look in email template
 const EmailPreview = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -35,7 +34,9 @@ const EmailPreview = () => {
       .split("")
       .reduce(
         (acc, iter, index) =>
-          acc + iter + (index % textLineLength === 0 ? "\n" : ""),
+          index !== 0
+            ? acc + iter + (index % textLineLength === 0 ? "\n" : "")
+            : "",
         ""
       );
     return formattedText;
