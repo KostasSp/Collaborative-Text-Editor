@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const mongoSchema = require("./MongoSchema");
 const date = require("../client/src/utility/DateFormat");
 const sanitizeHtml = require("sanitize-html");
-util = require("util");
+const _ = require("underscore");
 
 mongoose.connect("mongodb://localhost/text-editor");
 
@@ -32,9 +32,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on("save-doc", async (data) => {
+      // console.log(data);
       let clean = sanitizeHtml(data.ops[0].insert);
       data.ops[0].insert = clean;
-      // console.log(data);
+      console.log(data);
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
 

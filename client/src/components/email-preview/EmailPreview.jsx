@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./EmailPreview.scss";
 import SendToEmail from "../send-email/SendToEmail";
+import _ from "underscore";
 
 const EmailPreview = () => {
   const { state } = useLocation();
@@ -47,9 +48,10 @@ const EmailPreview = () => {
     let result;
     if (typeof object !== "undefined") {
       typeof object.ops[1] !== "undefined"
-        ? (result =
-            formatText(object.ops[0].insert) + formatText(object.ops[1].insert))
-        : (result = formatText(object.ops[0].insert));
+        ? (result = _.unescape(
+            formatText(object.ops[0].insert) + formatText(object.ops[1].insert)
+          ))
+        : (result = _.unescape(formatText(object.ops[0].insert)));
 
       return result;
     }

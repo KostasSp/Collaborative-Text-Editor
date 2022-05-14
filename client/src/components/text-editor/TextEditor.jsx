@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
 import { Link } from "react-router-dom";
 import EmailIcon from "@mui/icons-material/Email";
+import _ from "underscore";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
@@ -53,7 +54,12 @@ const TextEditor = () => {
     if (shareSocketData == null || shareQuillData == null) return;
 
     shareSocketData.once("load-instance", (instance) => {
+      if (typeof instance.ops !== "undefined") {
+        let convert = _.unescape(instance.ops[0].insert);
+        instance.ops[0].insert = convert;
+      }
       shareQuillData.setContents(instance);
+
       shareQuillData.enable();
     });
 
