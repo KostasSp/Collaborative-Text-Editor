@@ -1,7 +1,9 @@
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 const mongoSchema = require("./MongoSchema");
-const date = require("./DateFormat");
+const date = require("../client/src/utility/DateFormat");
+const sanitizeHtml = require("sanitize-html");
+util = require("util");
 
 mongoose.connect("mongodb://localhost/text-editor");
 
@@ -22,12 +24,17 @@ io.on("connection", (socket) => {
     const doc = await getOrCreateDocument(id);
     socket.join(id);
     socket.emit("load-instance", doc.data);
+    // console.log(doc.data.ops);
 
     socket.on("send-change", (delta) => {
-      console.log(delta);
+      // console.log(delta);
       socket.broadcast.to(id).emit("receive-change", delta);
     });
+
     socket.on("save-doc", async (data) => {
+      let clean = sanitizeHtml(data.ops[0].insert);
+      data.ops[0].insert = clean;
+      // console.log(data);
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
 
