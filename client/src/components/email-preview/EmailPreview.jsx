@@ -29,6 +29,7 @@ const EmailPreview = () => {
     socketIP.emit("get-instance", id);
   }, [socketIP, id]);
 
+  //adds a new line every 55 (textLineLength) characters, to format the text in the email preview
   const formatText = (text) => {
     let formattedText = text
       .split("")
@@ -39,7 +40,7 @@ const EmailPreview = () => {
             : "",
         ""
       );
-    return formattedText;
+    return text[0] + formattedText;
   };
 
   const checkUndefined = (object) => {
