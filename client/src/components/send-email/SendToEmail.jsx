@@ -1,8 +1,6 @@
 import emailjs from "@emailjs/browser";
 
 const SendToEmail = (props) => {
-  //add message "login to automatically fill out email address (and name?)",
-  //also show preview of what would be sent (format it for email viewing first)
   const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3"; //public key, no point hiding it in env
   const { REACT_APP_TEMPLATE_ID } = process.env;
 

@@ -5,24 +5,19 @@ import "quill/dist/quill.snow.css";
 import toolbarOptions from "../../utility/ToolbarOptions";
 import { useParams } from "react-router-dom";
 import sanitizeHtml from "sanitize-html";
-import { Link } from "react-router-dom";
-import EmailIcon from "@mui/icons-material/Email";
 import _ from "underscore";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
-//maybe add whatsapp and messenger link sharing, for collaboration
 const TextEditor = () => {
   const [shareSocketData, setShareSocketData] = useState();
   const [shareQuillData, setShareQuillData] = useState();
-  const [quillContents, setQuillContents] = useState();
   const { id } = useParams();
 
-  /*without useEffect cleanup, I get new Quill inst. with every rerender. Used useCallback to set
-  wrapper variable instead, otherwise first render crashes app, because (I think) the useEffect ran and
+  /*without useEffect cleanup, I get a new text editor instance with every rerender. Used useCallback to set
+  wrapper variable instead, otherwise first render crashes the app, (I presume) because the useEffect ran and
   evaluated the ref in div "container" before it was instantiated*/
   const wrapper = useCallback((wrapper) => {
-    console.log("use call back ran");
     if (wrapper === null) return;
     wrapper.innerHTML = ""; //no return() for useCallback - have to empty the div JS-style
     let editorDiv = document.createElement("div");
@@ -37,10 +32,12 @@ const TextEditor = () => {
     setShareQuillData(quill);
   }, []);
 
+  //saves the current instance's (room) ID, so user can be redirected to the same one after leaving the page
   useEffect(() => {
     localStorage.setItem("previousRoomURL", id);
   }, [id]);
 
+  //saves the server's IP address and clears previous connection, to prevent multiple ones being open
   useEffect(() => {
     // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
     const socket = io("http://localhost:5001");
@@ -50,9 +47,10 @@ const TextEditor = () => {
     return () => socket.disconnect;
   }, []);
 
+  /*gets any existing text attributed to that room ID from the server. "instance" here is the object Quill.js's 
+  text editor uses to save and update text*/
   useEffect(() => {
     if (shareSocketData == null || shareQuillData == null) return;
-
     shareSocketData.once("load-instance", (instance) => {
       if (typeof instance.ops !== "undefined") {
         let convert = _.unescape(instance.ops[0].insert);
@@ -68,7 +66,6 @@ const TextEditor = () => {
 
   useEffect(() => {
     if (shareSocketData == null || shareQuillData == null) return;
-
     const detectChange = (delta, oldDelta, source) => {
       //Quill.js docs - change may also be from source 'api', so I'm accepting changes from 'user' only
       if (source !== "user") return;
@@ -80,13 +77,9 @@ const TextEditor = () => {
           { insert: sanitizeHtml(dirtyInput) },
         ],
       };
-
-      console.log(shareQuillData.getContents().ops[0].insert);
-      console.log(quillContents);
-
       shareSocketData.emit("send-change", cleanedInput);
     };
-    //"text-change" = Quill.js event - updates when the contents of Quill change
+    //"text-change" = Quill.js event - updates when the text editor's contents change
     shareQuillData.on("text-change", detectChange);
 
     return () => {
@@ -96,7 +89,6 @@ const TextEditor = () => {
 
   useEffect(() => {
     if (shareSocketData == null || shareQuillData == null) return;
-
     const detectChange = (delta) => {
       shareQuillData.updateContents(delta);
     };
@@ -107,12 +99,11 @@ const TextEditor = () => {
     };
   }, [shareSocketData, shareQuillData]);
 
+  //sends all changes to server every second, which in turns saves it to mongoDB
   useEffect(() => {
     if (shareSocketData == null || shareQuillData == null) return;
-
     const saveToDB = setInterval(() => {
       shareSocketData.emit("save-doc", shareQuillData.getContents());
-      setQuillContents(shareQuillData.getContents());
     }, 1000);
 
     return () => clearInterval(saveToDB);
@@ -121,9 +112,9 @@ const TextEditor = () => {
   return (
     /* setting the new Quill in this div so I can "clean" it at every rerender (otherwise I get multiple 
       Quill instances on page), and referencing it to gain access to the div in the useCallback */
-    <div>
+    <>
       <div className="container" ref={wrapper}></div>
-    </div>
+    </>
   );
 };
 

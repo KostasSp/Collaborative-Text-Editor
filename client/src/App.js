@@ -1,10 +1,9 @@
 import "./App.scss";
 import TextEditor from "./components/text-editor/TextEditor";
 import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
-import { v4 as uuidV4 } from "uuid";
+import { v4 as uuid } from "uuid";
 import LoginButton from "./components/log-buttons/LoginButton";
 import LogoutButton from "./components/log-buttons/LogoutButton";
-import SendToEmail from "./components/send-email/SendToEmail";
 import "./components/log-buttons/LogButtons.scss";
 import "./components/send-email/SendToEmail.scss";
 import EmailIcon from "@mui/icons-material/Email";
@@ -17,7 +16,6 @@ function App() {
       <BrowserRouter>
         <div className="top-container">
           <div className="send-email-message">
-            {/* remove link on click, maybe empty the element JS-style? */}
             <Link to={"/email"} state={"test"}>
               send progress to email
             </Link>
@@ -35,7 +33,7 @@ function App() {
           <Route
             path="/"
             //create new client instance and redirect there everytime I visit localhost:3000 or homepage
-            element={<Navigate to={`/documents/${uuidV4()}`} />}
+            element={<Navigate to={`/documents/${uuid()}`} />}
           ></Route>
           <Route path="/documents/:id" element={<TextEditor />}></Route>
           <Route path="/email" element={<EmailPreview />}></Route>

@@ -30,18 +30,18 @@ const EmailPreview = () => {
     socketIP.emit("get-instance", id);
   }, [socketIP, id]);
 
-  //adds a new line every 55 (textLineLength) characters, to format the text in the email preview
+  //adds a new line every 55 (textLineLength) characters, to format the text in the email preview page
   const formatText = (text) => {
     let formattedText = text
       .split("")
       .reduce(
         (acc, iter, index) =>
-          index !== 0
-            ? acc + iter + (index % textLineLength === 0 ? "\n" : "")
-            : "",
+          index === 0
+            ? text[0]
+            : acc + iter + (index % textLineLength === 0 ? "\n" : ""),
         ""
       );
-    return text[0] + formattedText;
+    return formattedText;
   };
 
   const checkUndefined = (object) => {
@@ -67,7 +67,7 @@ const EmailPreview = () => {
         <table>
           <thead>
             <tr>
-              <th>Progress preview</th>
+              <th>email preview</th>
             </tr>
           </thead>
           <tbody>{checkUndefined(contents)}</tbody>

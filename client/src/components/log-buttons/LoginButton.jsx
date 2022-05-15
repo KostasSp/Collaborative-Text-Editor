@@ -5,15 +5,16 @@ import { Button } from "@material-ui/core";
 const LoginButton = () => {
   const roomID = localStorage.getItem("previousRoomURL");
   console.log(roomID);
-  const { loginWithRedirect } = useAuth0({
-    appState: { returnTo: roomID },
-  });
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
   return (
     <Button
       style={{ textTransform: "none" }}
-      onClick={async () => await loginWithRedirect()}
+      onClick={() => loginWithRedirect()}
     >
+      {/* isAuthenticated is always false at the moment because the "Application Login URI" field on auth0 has 
+      to be https, so it won't work with localhost. Maybe add the production URI once it's deployed */}
+      {isAuthenticated && console.log(JSON.stringify(user))}
       Login
     </Button>
   );
