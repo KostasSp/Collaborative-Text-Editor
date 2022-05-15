@@ -1,6 +1,7 @@
 .send-email-form {
   display: flex;
   justify-content: center;
+  // flex-direction: column;
 }
 
 input[type="submit"] {
@@ -10,4 +11,32 @@ input[type="submit"] {
   padding: 7px 25px;
   margin: 2px 0px;
   cursor: pointer;
+}
+
+.email-sent-message {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  font-size: 18px;
+  color: green;
+  -webkit-animation: fade-in 1.2s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: fade-in 1.2s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation-delay: 1s;
+}
+
+@-webkit-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

@@ -1,8 +1,17 @@
 import emailjs from "@emailjs/browser";
+import { useEffect, useState } from "react";
 
 const SendToEmail = (props) => {
   const PUBLIC_KEY = "hkQX5Spwrk9B5Z-O3"; //public key, no point hiding it in env
   const { REACT_APP_TEMPLATE_ID } = process.env;
+
+  const [emailSent, setEmailSent] = useState(false);
+
+  useEffect(() => {
+    let timer = setInterval(() => setEmailSent(false), 5000);
+
+    return () => clearInterval(timer);
+  }, [emailSent]);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -22,60 +31,64 @@ const SendToEmail = (props) => {
         }
       );
     e.target.reset();
+    setEmailSent(true);
   };
 
   return (
-    <div className="send-email-form">
-      <div className="container">
-        <form onSubmit={sendEmail}>
-          <div className="row pt-5 mx-auto">
-            <div className="col-8 form-group mx-auto">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Name"
-                name="name"
-              />
+    <div>
+      <div className="send-email-form">
+        <div className="container">
+          <form onSubmit={sendEmail}>
+            <div className="row pt-5 mx-auto">
+              <div className="col-8 form-group mx-auto">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Name"
+                  name="name"
+                />
+              </div>
+              <div className="col-8 form-group pt-2 mx-auto">
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Email Address"
+                  name="email"
+                  required
+                />
+              </div>
+              <div className="col-8 form-group pt-2 mx-auto">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Subject"
+                  name="subject"
+                />
+              </div>
+              <div className="col-8 form-group pt-2 mx-auto">
+                <textarea
+                  className="form-control"
+                  id=""
+                  cols="40"
+                  rows="6"
+                  placeholder="Your message"
+                  name="message"
+                  value={props.text}
+                  required
+                ></textarea>
+              </div>
+              <div className="col-8 pt-3 mx-auto">
+                <input
+                  type="submit"
+                  className="btn btn-info"
+                  value="Send Email"
+                ></input>
+              </div>
             </div>
-            <div className="col-8 form-group pt-2 mx-auto">
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Email Address"
-                name="email"
-                required
-              />
-            </div>
-            <div className="col-8 form-group pt-2 mx-auto">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Subject"
-                name="subject"
-              />
-            </div>
-            <div className="col-8 form-group pt-2 mx-auto">
-              <textarea
-                className="form-control"
-                id=""
-                cols="40"
-                rows="6"
-                placeholder="Your message"
-                name="message"
-                value={props.text}
-                required
-              ></textarea>
-            </div>
-            <div className="col-8 pt-3 mx-auto">
-              <input
-                type="submit"
-                className="btn btn-info"
-                value="Send Email"
-              ></input>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
+      {emailSent && <div className="email-sent-message">email sent</div>}
     </div>
   );
 };
