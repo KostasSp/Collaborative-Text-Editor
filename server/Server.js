@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
     const doc = await getOrCreateDocument(id);
     socket.join(id);
     socket.emit("load-instance", doc.data);
-    // console.log(doc.data.ops);
+    console.log(doc.data);
 
     socket.on("send-change", (delta) => {
       // console.log(delta);
@@ -32,10 +32,14 @@ io.on("connection", (socket) => {
     });
 
     socket.on("save-doc", async (data) => {
-      // console.log(data);
+      /*The if statements below prevent unnecessary server updating when text editor contents are the same as the
+      contents of document's that was fetched on load (i.e., the object saved on the database, under the same id)*/
+      if (data.ops[0].insert == null) return;
+      if (doc.data.ops != null)
+        if (doc.data.ops[0].insert == data.ops[0].insert) return;
+      console.log("true");
       let clean = sanitizeHtml(data.ops[0].insert);
       data.ops[0].insert = clean;
-      console.log(data);
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
 
@@ -45,7 +49,6 @@ io.on("connection", (socket) => {
 
 const getOrCreateDocument = async (id) => {
   if (id == null) return;
-
   const document = await mongoSchema.findById(id); //error was here, needed to await findById operation
   if (document) return document;
   return await mongoSchema.create({ _id: id, data: "" });
