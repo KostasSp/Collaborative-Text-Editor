@@ -9,33 +9,6 @@ body {
   background-color: #f3f3f3;
 }
 
-.container .ql-editor {
-  background-color: white;
-  /* A4 paper dimensions */
-  width: 21cm;
-  height: 29.7cm;
-  padding: 2.5cm;
-  margin: 1rem;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
-}
-
-/* one space for classnames between different divs, but none it they are on the same div */
-.container .ql-container.ql-snow {
-  display: flex;
-  justify-content: center;
-  border: none;
-}
-
-.container .ql-toolbar.ql-snow {
-  background-color: #f3f3f3;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
 .top-container {
   display: flex;
   align-items: center;
@@ -43,7 +16,7 @@ body {
   flex-direction: row;
 }
 
-.send-email-message {
+.send-email-link {
   color: rgba(7, 7, 7, 0.445);
   display: flex;
   align-items: center;

@@ -1,3 +1,4 @@
+import "./TextEditor.styles.scss";
 import React, { useState, useEffect, useCallback } from "react";
 import Quill from "quill";
 import { io } from "socket.io-client";
@@ -69,7 +70,8 @@ const TextEditor = () => {
     const detectChange = (delta, oldDelta, source) => {
       //Quill.js docs - change may also be from source 'api', so I'm accepting changes from 'user' only
       if (source !== "user") return;
-      //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
+      console.log(delta);
+      //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below (also on server)
       const dirtyInput = delta.ops[1].insert;
       const cleanedInput = {
         ops: [

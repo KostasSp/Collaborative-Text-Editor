@@ -15,6 +15,11 @@ const io = require("socket.io")(5001, {
   },
 });
 
+const cleanIncomingData = (data) => {
+  let clean = sanitizeHtml(data.ops[0].insert);
+  data.ops[0].insert = clean;
+};
+
 // chalk version 4.1.0 (not higher) required
 if (!io.connected) console.log(chalk.red("connecting..."));
 
@@ -27,7 +32,8 @@ io.on("connection", (socket) => {
     console.log(doc.data);
 
     socket.on("send-change", (delta) => {
-      // console.log(delta);
+      console.log(delta);
+      cleanIncomingData(delta);
       socket.broadcast.to(id).emit("receive-change", delta);
     });
 
@@ -37,9 +43,7 @@ io.on("connection", (socket) => {
       if (data.ops[0].insert == null) return;
       if (doc.data.ops != null)
         if (doc.data.ops[0].insert == data.ops[0].insert) return;
-      console.log("true");
-      let clean = sanitizeHtml(data.ops[0].insert);
-      data.ops[0].insert = clean;
+      cleanIncomingData(data);
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
 
@@ -47,6 +51,7 @@ io.on("connection", (socket) => {
   });
 });
 
+//search for existing object with the passed ID in mongoDB, or create one if it doesn't already exist
 const getOrCreateDocument = async (id) => {
   if (id == null) return;
   const document = await mongoSchema.findById(id); //error was here, needed to await findById operation

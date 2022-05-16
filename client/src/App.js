@@ -15,7 +15,7 @@ function App() {
     <div>
       <BrowserRouter>
         <div className="top-container">
-          <div className="send-email-message">
+          <div className="send-email-link">
             <Link to={"/email"} state={"test"}>
               send progress to email
             </Link>
