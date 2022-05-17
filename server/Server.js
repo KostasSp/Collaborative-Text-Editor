@@ -15,16 +15,6 @@ const io = require("socket.io")(5001, {
   },
 });
 
-//Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
-const cleanIncomingData = (data) => {
-  return sanitizeHtml(data);
-};
-
-// function testHtml(str) {
-//   if (typeof str.ops[0] !== "undefined")
-//     return str.ops[0].insert.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-// }
-
 // chalk version 4.1.0 (not higher) required
 if (!io.connected) console.log(chalk.red("connecting..."));
 
@@ -37,16 +27,12 @@ io.on("connection", (socket) => {
     socket.emit("load-instance", doc.data);
 
     socket.on("send-change", (delta) => {
-      // console.log(delta.ops[1].insert);
-      // // if (typeof delta.ops !== "undefined")
-      // let clean = cleanIncomingData(delta.ops[1].insert);
-      // delta.ops[1].insert = clean;
-      // console.log(delta.ops[1].insert);
       let clean;
       let receivedData = delta;
+      //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
       if (typeof receivedData.ops[1] !== "undefined") {
         if (typeof receivedData.ops[1].insert !== "undefined")
-          clean = cleanIncomingData(receivedData.ops[1].insert);
+          clean = sanitizeHtml(receivedData.ops[1].insert);
         receivedData.ops[1].insert = clean;
       }
       socket.broadcast.to(id).emit("receive-change", receivedData);

@@ -3,8 +3,6 @@ import { useAuth0, Auth0Provider } from "@auth0/auth0-react";
 import { Button } from "@material-ui/core";
 
 const LoginButton = () => {
-  const roomID = localStorage.getItem("previousRoomURL");
-  console.log(roomID);
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
   return (

@@ -24,7 +24,6 @@ function App() {
             />
           </div>
           <div className="Log-buttons">
-            {/* add "Send Email" icon here, where user can either type email, or simply log in with google for email to be filled in automatically */}
             <LoginButton />
             <LogoutButton />
           </div>
@@ -32,7 +31,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            //create new client instance and redirect there everytime I visit localhost:3000 or homepage
+            //creates new client instance and redirects there everytime user visits homepage
             element={<Navigate to={`/documents/${uuid()}`} />}
           ></Route>
           <Route path="/documents/:id" element={<TextEditor />}></Route>
