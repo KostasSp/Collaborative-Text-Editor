@@ -15,26 +15,41 @@ const io = require("socket.io")(5001, {
   },
 });
 
+//Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below
 const cleanIncomingData = (data) => {
-  let clean = sanitizeHtml(data.ops[0].insert);
-  data.ops[0].insert = clean;
+  return sanitizeHtml(data);
 };
+
+// function testHtml(str) {
+//   if (typeof str.ops[0] !== "undefined")
+//     return str.ops[0].insert.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// }
 
 // chalk version 4.1.0 (not higher) required
 if (!io.connected) console.log(chalk.red("connecting..."));
 
+//
 io.on("connection", (socket) => {
   socket.on("get-instance", async (id) => {
-    console.log(date);
     const doc = await getOrCreateDocument(id);
+    console.log(date);
     socket.join(id);
     socket.emit("load-instance", doc.data);
-    console.log(doc.data);
 
     socket.on("send-change", (delta) => {
-      console.log(delta);
-      cleanIncomingData(delta);
-      socket.broadcast.to(id).emit("receive-change", delta);
+      // console.log(delta.ops[1].insert);
+      // // if (typeof delta.ops !== "undefined")
+      // let clean = cleanIncomingData(delta.ops[1].insert);
+      // delta.ops[1].insert = clean;
+      // console.log(delta.ops[1].insert);
+      let clean;
+      let receivedData = delta;
+      if (typeof receivedData.ops[1] !== "undefined") {
+        if (typeof receivedData.ops[1].insert !== "undefined")
+          clean = cleanIncomingData(receivedData.ops[1].insert);
+        receivedData.ops[1].insert = clean;
+      }
+      socket.broadcast.to(id).emit("receive-change", receivedData);
     });
 
     socket.on("save-doc", async (data) => {
@@ -43,7 +58,6 @@ io.on("connection", (socket) => {
       if (data.ops[0].insert == null) return;
       if (doc.data.ops != null)
         if (doc.data.ops[0].insert == data.ops[0].insert) return;
-      cleanIncomingData(data);
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
 

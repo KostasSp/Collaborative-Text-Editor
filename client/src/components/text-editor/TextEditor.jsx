@@ -5,21 +5,96 @@ import { io } from "socket.io-client";
 import "quill/dist/quill.snow.css";
 import toolbarOptions from "../../utility/ToolbarOptions";
 import { useParams } from "react-router-dom";
-import sanitizeHtml from "sanitize-html";
 import _ from "underscore";
 
 //https://github.com/mars/heroku-cra-node.git <- full stack hosting
 
 const TextEditor = () => {
-  const [shareSocketData, setShareSocketData] = useState();
+  const [socket, setSocket] = useState();
   const [shareQuillData, setShareQuillData] = useState();
   const { id } = useParams();
 
-  /*without useEffect cleanup, I get a new text editor instance with every rerender. Used useCallback to set
-  wrapper variable instead, otherwise first render crashes the app, (I presume) because the useEffect ran and
-  evaluated the ref in div "container" before it was instantiated*/
+  //saves the current instance's (room) ID, so user can be redirected to the same one after leaving the page
+  useEffect(() => {
+    localStorage.setItem("previousRoomURL", id);
+  }, [id]);
+
+  //saves the server's IP address and clears previous connection, to prevent multiple ones being open
+  useEffect(() => {
+    // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
+    const socket2 = io("http://localhost:5001");
+    setSocket(socket2);
+
+    //"Some side-effects need cleanup: close a socket, clear timers."
+    return () => socket2.disconnect;
+  }, []);
+
+  /*gets any existing text attributed to that room ID from the server. Here, "instance" is the object Quill.js's 
+  text editor uses to save and update text*/
+  useEffect(() => {
+    if (socket == null || shareQuillData == null) return;
+    socket.once("load-instance", (instance) => {
+      if (typeof instance.ops !== "undefined") {
+        let convert = _.unescape(instance.ops[0].insert);
+        instance.ops[0].insert = convert;
+      }
+      shareQuillData.setContents(instance);
+      shareQuillData.enable();
+    });
+
+    socket.emit("get-instance", id);
+  }, [shareQuillData, socket, id]);
+
+  useEffect(() => {
+    if (socket == null || shareQuillData == null) return;
+    const detectChange = (delta, oldDelta, source) => {
+      console.log(delta);
+      //Quill.js docs - change may also be from source 'api', so I'm accepting changes from 'user' only
+      if (source === "api") return;
+      socket.emit("send-change", delta);
+    };
+    //"text-change" = Quill.js event - updates when the text editor's contents change
+    shareQuillData.on("text-change", detectChange);
+
+    return () => {
+      shareQuillData.off("text-change", detectChange);
+    };
+  }, [socket, shareQuillData]);
+
+  useEffect(() => {
+    if (socket == null || shareQuillData == null) return;
+    let convert;
+    const detectChange = (delta) => {
+      let receivedData = delta;
+      if (typeof receivedData.ops[1] !== "undefined") {
+        if (typeof receivedData.ops[1].insert !== "undefined")
+          convert = _.unescape(receivedData.ops[1].insert);
+        receivedData.ops[1].insert = convert;
+      }
+      shareQuillData.updateContents(receivedData);
+    };
+    socket.on("receive-change", detectChange);
+
+    return () => {
+      socket.off("receive-change", detectChange);
+    };
+  }, [socket, shareQuillData]);
+
+  //sends all changes to server every second, which in turns saves it to mongoDB
+  useEffect(() => {
+    if (socket == null || shareQuillData == null) return;
+    const saveToDB = setInterval(() => {
+      socket.emit("save-doc", shareQuillData.getContents());
+    }, 1000);
+
+    return () => clearInterval(saveToDB);
+  }, [socket, shareQuillData]);
+
+  /*without cleanup, I get a new text editor instance with every rerender. Used useCallback to set
+  wrapper variable instead of useEffect, otherwise I get "undefined" error, because the 
+  useEffect ran and evaluated the ref "wrapper" in the div "container" before it would be defined*/
   const wrapper = useCallback((wrapper) => {
-    if (wrapper === null) return;
+    if (wrapper == null) return;
     wrapper.innerHTML = ""; //no return() for useCallback - have to empty the div JS-style
     let editorDiv = document.createElement("div");
     wrapper.append(editorDiv);
@@ -32,84 +107,6 @@ const TextEditor = () => {
 
     setShareQuillData(quill);
   }, []);
-
-  //saves the current instance's (room) ID, so user can be redirected to the same one after leaving the page
-  useEffect(() => {
-    localStorage.setItem("previousRoomURL", id);
-  }, [id]);
-
-  //saves the server's IP address and clears previous connection, to prevent multiple ones being open
-  useEffect(() => {
-    // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
-    const socket = io("http://localhost:5001");
-    setShareSocketData(socket);
-
-    //"Some side-effects need cleanup: close a socket, clear timers."
-    return () => socket.disconnect;
-  }, []);
-
-  /*gets any existing text attributed to that room ID from the server. "instance" here is the object Quill.js's 
-  text editor uses to save and update text*/
-  useEffect(() => {
-    if (shareSocketData == null || shareQuillData == null) return;
-    shareSocketData.once("load-instance", (instance) => {
-      if (typeof instance.ops !== "undefined") {
-        let convert = _.unescape(instance.ops[0].insert);
-        instance.ops[0].insert = convert;
-      }
-      shareQuillData.setContents(instance);
-
-      shareQuillData.enable();
-    });
-
-    shareSocketData.emit("get-instance", id);
-  }, [shareQuillData, shareSocketData, id]);
-
-  useEffect(() => {
-    if (shareSocketData == null || shareQuillData == null) return;
-    const detectChange = (delta, oldDelta, source) => {
-      //Quill.js docs - change may also be from source 'api', so I'm accepting changes from 'user' only
-      if (source !== "user") return;
-      console.log(delta);
-      //Quill.js is known to be vulnerable to XSS attacks - some extra security implemented below (also on server)
-      const dirtyInput = delta.ops[1].insert;
-      const cleanedInput = {
-        ops: [
-          { retain: delta.ops[0].retain + 1 },
-          { insert: sanitizeHtml(dirtyInput) },
-        ],
-      };
-      shareSocketData.emit("send-change", cleanedInput);
-    };
-    //"text-change" = Quill.js event - updates when the text editor's contents change
-    shareQuillData.on("text-change", detectChange);
-
-    return () => {
-      shareQuillData.off("text-change", detectChange);
-    };
-  }, [shareSocketData, shareQuillData]);
-
-  useEffect(() => {
-    if (shareSocketData == null || shareQuillData == null) return;
-    const detectChange = (delta) => {
-      shareQuillData.updateContents(delta);
-    };
-    shareSocketData.on("receive-change", detectChange);
-
-    return () => {
-      shareSocketData.off("receive-change", detectChange);
-    };
-  }, [shareSocketData, shareQuillData]);
-
-  //sends all changes to server every second, which in turns saves it to mongoDB
-  useEffect(() => {
-    if (shareSocketData == null || shareQuillData == null) return;
-    const saveToDB = setInterval(() => {
-      shareSocketData.emit("save-doc", shareQuillData.getContents());
-    }, 1000);
-
-    return () => clearInterval(saveToDB);
-  }, [shareSocketData, shareQuillData]);
 
   return (
     /* setting the new Quill in this div so I can "clean" it at every rerender (otherwise I get multiple 
