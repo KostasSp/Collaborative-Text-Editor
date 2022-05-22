@@ -5,9 +5,11 @@ const date = require("../client/src/utility/DateFormat");
 const sanitizeHtml = require("sanitize-html");
 const _ = require("underscore");
 
+const port = process.env.PORT || 5001;
+
 mongoose.connect("mongodb://localhost/text-editor");
 
-const io = require("socket.io")(5001, {
+const io = require("socket.io")(port, {
   cors: {
     origin: "http://localhost:3000",
     // origin: "http://192.168.1.3:3000", <- needs ssl to use Auth0, maybe there's some library
@@ -38,6 +40,7 @@ io.on("connection", (socket) => {
       socket.broadcast.to(id).emit("receive-change", receivedData);
     });
 
+    //db hosting: "I think typically you’d use a third party database, so like mongo atlas and point your deployed vercel app to it"
     socket.on("save-doc", async (data) => {
       /*The if statements below prevent unnecessary server updating when text editor contents are the same as the
       contents of document's that was fetched on load (i.e., the object saved on the database, under the same id)*/
@@ -46,12 +49,11 @@ io.on("connection", (socket) => {
         if (doc.data.ops[0].insert == data.ops[0].insert) return;
       await mongoSchema.findByIdAndUpdate(id, { data: data });
     });
-
     console.log(chalk.bold.greenBright("connected"));
   });
 });
 
-//search for existing object with the passed ID in mongoDB, or create one if it doesn't already exist
+//search for existing document (object) with the passed ID in mongoDB, or create one if it doesn't already exist
 const getOrCreateDocument = async (id) => {
   if (id == null) return;
   const document = await mongoSchema.findById(id); //error was here, needed to await findById operation
