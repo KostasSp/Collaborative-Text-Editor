@@ -22,7 +22,7 @@ const TextEditor = () => {
   //saves the server's IP address and clears previous connection, to prevent multiple ones being open
   useEffect(() => {
     // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
-    const serverSocket = io("http://localhost:5001");
+    const serverSocket = io("https://text-editor-finished.herokuapp.com/");
     setSocket(serverSocket);
 
     //"Some side-effects need cleanup: close a socket, clear timers."

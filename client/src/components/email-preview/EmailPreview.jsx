@@ -14,7 +14,7 @@ const EmailPreview = () => {
   const id = localStorage.getItem("previousRoomURL");
 
   useEffect(() => {
-    const socket = io("http://localhost:5001");
+    const socket = io("https://text-editor-finished.herokuapp.com/");
     setSocketIP(socket);
 
     return () => socket.disconnect;
