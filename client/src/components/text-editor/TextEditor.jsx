@@ -22,11 +22,11 @@ const TextEditor = () => {
   //saves the server's IP address and clears previous connection, to prevent multiple ones being open
   useEffect(() => {
     // const socket = io("http://192.168.1.3:5001"); <- needs ssl to use Auth0, maybe there's some library
-    const socket2 = io("http://localhost:5001");
-    setSocket(socket2);
+    const serverSocket = io("http://localhost:5001");
+    setSocket(serverSocket);
 
     //"Some side-effects need cleanup: close a socket, clear timers."
-    return () => socket2.disconnect;
+    return () => serverSocket.disconnect;
   }, []);
 
   /*gets any existing text attributed to that room ID from the server. Here, "instance" is the object Quill.js's 

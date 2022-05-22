@@ -1,7 +1,7 @@
+require("dotenv").config();
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 const mongoSchema = require("./MongoSchema");
-const date = require("../client/src/utility/DateFormat");
 const sanitizeHtml = require("sanitize-html");
 const _ = require("underscore");
 
